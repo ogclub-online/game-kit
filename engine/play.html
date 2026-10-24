@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>OG CLUB GAME KIT</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="view" aria-label="The game"></canvas>
+  <div id="hud"></div>
+  <div class="kit-start" id="kit-start">
+    <div class="kit-card">
+      <p class="kit-kicker">OG CLUB GAME KIT · LOCAL PLAYTEST</p>
+      <h1 id="kit-title">LOADING…</h1>
+      <ol class="kit-how" id="kit-how"></ol>
+      <div class="kit-row">
+        <label>MODE <select id="kit-mode"><option value="solo">SOLO</option><option value="coop">CO-OP</option></select></label>
+        <label>BOTS <select id="kit-bots"><option>0</option><option selected>1</option><option>2</option><option>3</option><option>7</option></select></label>
+        <label>LAG <select id="kit-lag"><option value="0">0 MS</option><option value="40">40 MS</option><option value="80">80 MS</option><option value="150">150 MS</option></select></label>
+      </div>
+      <button class="btn" type="button" id="kit-go">PLAY</button>
+      <p class="kit-note">BOTS JOIN CO-OP AND WANDER. LAG DELAYS EVERY MESSAGE EACH WAY, LIKE A REAL CONNECTION. WASD OR ARROWS WALK · CLICK THE MAP · WHEEL OR +/- ZOOMS.</p>
+    </div>
+  </div>
+  <div class="kit-toast" id="kit-toast" hidden></div>
+  <script type="module" src="host.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+/* SWARM SIEGE's own panel bits (the shared .gt panel styles are in engine/style.css). */
+/* SWARM SIEGE uses the same panel. */
+#sgd { border-color: #e3b341; background: #14100a; }
+.gt-tools #sg-go, .gt-tools #sg-next { grid-column: 1 / -1; }
+.sg-dot { width: 10px; height: 10px; display: inline-block; flex: none; }
+.sg-tips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 0 0 4px 16px; }
+.gt-best .sg-dot { justify-self: center; }
+#sg.folded .gt-side > #sg-sel:not(:empty) { display: grid; }
+.gt-side .sg-tips .btn { min-height: 26px; padding: 2px 4px; justify-content: center; box-shadow: none; }

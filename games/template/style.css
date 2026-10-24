@@ -1,0 +1,3 @@
+/* COIN DASH's own styles: a slim panel (the shared .gt styles are in engine/style.css). */
+.cd-side { width: 220px; bottom: auto; }
+.gt-tools #cd-go { grid-column: 1 / -1; }

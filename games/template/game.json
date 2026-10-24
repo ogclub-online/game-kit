@@ -1,0 +1,18 @@
+{
+  "id": "template",
+  "name": "COIN DASH",
+  "tagline": "GRAB THE COINS ROUND THE WATCHER · DODGE THE FUD · SOLO OR UP TO 4",
+  "players": [1, 4],
+  "modes": ["solo", "coop"],
+  "prefix": "cd",
+  "watcher": true,
+  "panel": "panel.html",
+  "style": "style.css",
+  "reward": { "fn": "coinReward", "per": "coins grabbed", "max": 40 },
+  "howto": [
+    "THIS IS THE KIT'S STARTER GAME: COPY IT WITH `npm run new my-game` AND CHANGE IT INTO YOURS.",
+    "COINS POP UP ROUND THE WATCHER. WALK OVER THEM TO GRAB THEM (WASD, ARROWS OR CLICK).",
+    "FUD BOTS BOUNCE ABOUT: TOUCH ONE AND YOU'RE DIZZY FOR 2 SECONDS.",
+    "THE TEAM HAS 90 SECONDS TO GRAB ENOUGH COINS TOGETHER (MORE WITH MORE PLAYERS)."
+  ]
+}
