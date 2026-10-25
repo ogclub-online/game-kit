@@ -50,7 +50,12 @@ export class Round {
     this.hooks.changed(this);
   }
   goOffline(p) { const s = this.seats.get(p.id); if (s) s.offline = true; }
-  rejoin(p, now) { const s = this.seats.get(p.id); if (!s) return false; s.offline = false; this.now = now; p.conn.send({ t: 'cdw', you: p.id, host: this.host, mode: this.mode, st: this.state, startsIn: 0, r: this.roster(), s: this.snapshot(), rejoined: 1 }); return true; }
+  rejoin(p, now) {
+    const s = this.seats.get(p.id); if (!s) return false; s.offline = false; this.now = now;
+    p.conn.send({ t: 'cdw', you: p.id, host: this.host, mode: this.mode, st: this.state, startsIn: 0, r: this.roster(), s: this.snapshot(), rejoined: 1 });
+    if (this.endMsg) p.conn.send(this.endMsg); // back during the results: show them the end card again
+    return true;
+  }
   roster() { return [...this.seats.values()].map((s) => [s.p.id, s.p.pepeId]); }
   broadcast(msg, except) { sendAll(this.players, msg, except); }
   swarmNuke() {}
@@ -88,7 +93,8 @@ export class Round {
     this.state = 'ended'; this.endedAt = this.now;
     const results = this.players.map((p) => this.result(p));
     if (results.length) this.hooks.record(results);
-    this.broadcast({ t: 'cdend', won: won ? 1 : 0, score: this.g.score, goal: this.g.goal, r: this.players.map((p) => { const pl = this.g.players.get(p.id); return [p.id, p.pepeId, pl?.coins ?? 0, coinReward({ coins: pl?.coins ?? 0, won })]; }) });
+    this.endMsg = { t: 'cdend', won: won ? 1 : 0, score: this.g.score, goal: this.g.goal, r: this.players.map((p) => { const pl = this.g.players.get(p.id); return [p.id, p.pepeId, pl?.coins ?? 0, coinReward({ coins: pl?.coins ?? 0, won })]; }) };
+    this.broadcast(this.endMsg);
     this.hooks.changed(this);
   }
   /** What the world records for a player: their character, how they did, and what it pays. */

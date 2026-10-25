@@ -15,6 +15,7 @@ import { textArt } from '../../engine/text.js';
 import { WATCHER } from '../../engine/world.js';
 
 const now = () => performance.now();
+const coins = (n) => `${n} COIN${n === 1 ? '' : 'S'}`;
 export const predictFree = free;
 
 export function createClient(ctx) {
@@ -92,14 +93,14 @@ export function createClient(ctx) {
     box.replaceChildren();
     const bar = el('div', 'gt-castle'), fill = el('i'); fill.style.width = `${R.goal ? Math.min(100, (R.score / R.goal) * 100) : 0}%`; bar.append(fill);
     box.append(el('b', '', `${R.score} / ${R.goal} COINS`), el('span', 'gt-hp', R.st === 'countdown' ? `STARTS IN ${Math.max(0, Math.ceil((R.startsAt - now()) / 1000))}` : `${R.left}S LEFT`), bar);
-    if (R.me) box.append(el('span', 'gt-time', `YOU: ${R.me[6]} COINS${R.me[5] ? ' · DIZZY!' : ''}`));
+    if (R.me) box.append(el('span', 'gt-time', `YOU: ${coins(R.me[6])}${R.me[5] ? ' · DIZZY!' : ''}`));
     $('cd-go').hidden = !(R.st === 'countdown' && R.mode === 'coop' && R.host === R.you);
   }
   function finish(m) {
     R.ended = m; R.st = 'ended';
     const box = $('cd-card'); box.replaceChildren();
     box.append(el('h3', '', m.won ? 'THE TEAM MADE IT!' : 'OUT OF TIME'), el('p', 'mg-sub', `${m.score} OF ${m.goal} COINS`));
-    for (const [id, pepe, coins, pay] of m.r) box.append(el('p', 'mg-sub', `${id === R.you ? 'YOU' : label(pepe)}: ${coins} COINS · +${pay} $SWARM`));
+    for (const [id, pepe, n, pay] of m.r) box.append(el('p', 'mg-sub', `${id === R.you ? 'YOU' : label(pepe)}: ${coins(n)} · +${pay} $SWARM`));
     const row = el('div', 'mg-actions'), a = el('button', 'btn', 'PLAY AGAIN'), b = el('button', 'btn ghost', 'BACK TO TOWN');
     a.type = b.type = 'button';
     a.addEventListener('click', () => { R.again = true; send({ t: 'arenaLeave' }); });

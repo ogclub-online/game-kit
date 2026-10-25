@@ -30,3 +30,14 @@ test('co-op: friends join during the countdown, not after', () => {
   s.message(a.id, { t: 'arenaGo' }); s.run(2);
   assert.equal(s.join(13), null);
 });
+
+test('a reload during the results screen gets the welcome and the end card again', () => {
+  const s = new LocalServer(Round, { mode: 'solo', seed: 3 });
+  const a = s.open(11);
+  s.run(4); s.round.poke('end'); s.run(0.1);
+  const p = s.people.get(a.id), before = s.all(a.id, 'cdend').length;
+  s.round.goOffline(p);
+  assert.ok(s.round.rejoin(p, s.now));
+  assert.equal(s.all(a.id, 'cdend').length, before + 1);
+  assert.equal(s.last(a.id, 'cdw').st, 'ended');
+});

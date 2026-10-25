@@ -169,10 +169,12 @@ never sends its swarm at all).
   must get somewhere. Tune `rules.js` until a decent player gets far but not everywhere, and a run lasts minutes.
 - `npm run check`: the rules above.
 - `npm run play`, then `http://localhost:5173/?game=<id>&mode=coop&bots=2&lag=80`: play it with bots and a slow
-  connection. Add `&autostart=1` to skip the start screen. Agents can screenshot it with Playwright:
+  connection. Add `&autostart=1` to skip the start screen. Agents can screenshot it with the skill's script,
+  `node plugins/ogclub-game/skills/ogclub-game/scripts/shot.mjs <id> --end <seconds>` (solo, co-op, phone width and
+  the end card), or with Playwright by hand, in a `.mjs` file:
 
 ```js
-const { chromium } = require('playwright');
+import { chromium } from 'playwright';
 const b = await chromium.launch(), p = await b.newPage({ viewport: { width: 1280, height: 800 } });
 p.on('pageerror', (e) => console.log('ERROR', e.message));
 await p.goto('http://localhost:5173/?game=my-game&autostart=1');

@@ -14,7 +14,7 @@ const GAMES = process.env.KIT_GAMES ?? join(ROOT, 'games');
 const SHARED = new Set(['walk', 'dir', 'arenaGo', 'arenaLeave', 'ping']);
 const FROM_WORLD = new Set(['err', 'pong', 'og']);
 /** Prefixes already taken in OG Club World (its own games and systems). */
-const TAKEN = new Set(['a', 'b', 'g', 'gt', 'sb', 'mg', 'sp', 'gw', 'gf', 'gs', 'merge', 'club', 'furni', 'raffle', 'ball', 'gem', 'frame', 'boat']);
+const TAKEN = new Set(['a', 'b', 'g', 'gt', 'sb', 'mg', 'sp', 'gw', 'gf', 'gs', 'merge', 'club', 'furni', 'raffle', 'ball', 'gem', 'frame', 'boat', 'sg', 'rp', 'cd']);
 const ENGINE_OK = new Set(['world.js', 'sprites.js', 'text.js', 'motion.js']);
 const MAX_REWARD = 300;
 /** Code a game may not contain (its rules, round and browser module). */
