@@ -1,0 +1,29 @@
+{
+  "id": "lava-ring",
+  "name": "LAVA RING",
+  "tagline": "SLIDE, CAST, AND SEND YOUR RIVALS INTO THE LAVA",
+  "players": [
+    1,
+    8
+  ],
+  "modes": [
+    "solo",
+    "coop"
+  ],
+  "prefix": "lr",
+  "watcher": true,
+  "panel": "panel.html",
+  "style": "style.css",
+  "reward": {
+    "fn": "lavaReward",
+    "per": "round wins and knockouts",
+    "max": 120
+  },
+  "howto": [
+    "FIVE FREE-FOR-ALL ROUNDS. LAST PEPE STANDING WINS; MOST ROUND WINS TAKES THE RUN.",
+    "THE STONE IS SLICK: WASD OR ARROWS ACCELERATE, AND YOU KEEP SLIDING WHEN YOU LET GO. STEER EARLY.",
+    "AIM WITH THE CURSOR. Q FIRES FUD BLAST; E, R AND F USE SHOP SPELLS. ON PHONE, DRAG THE STICK AND TAP THE ARENA.",
+    "BLASTS SHOVE HARDER WHEN A TARGET IS HURT. THE WATCHER BLOCKS SHOTS; LAVA BURNS 28 HP EACH SECOND AND THE EDGE SHRINKS EVERY 15 SECONDS.",
+    "SURVIVE, DEAL DAMAGE AND KNOCK FOES OUT FOR GOLD. BUY OR UPGRADE UP TO THREE SPELLS BETWEEN ROUNDS."
+  ]
+}
