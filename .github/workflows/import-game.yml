@@ -1,10 +1,19 @@
 name: import a game
 # Actions → "import a game" → Run workflow: paste a hosted kit site's address (or its games/<id>/ folder) and the
-# game's id. It downloads the game, checks it, and opens a pull request with it and the results.
+# game's id. It downloads the game, checks it, and opens a pull request with it and the results. The daily
+# watch-swarm workflow calls it for each new game it finds.
 #
 # The game's code only ever runs in the "verify" job, which has no token and no write access, so a game can't
 # touch this repository or anything else. The job that commits and opens the pull request never runs it.
 on:
+  workflow_call:
+    inputs:
+      site:
+        type: string
+        required: true
+      id:
+        type: string
+        required: true
   workflow_dispatch:
     inputs:
       site:

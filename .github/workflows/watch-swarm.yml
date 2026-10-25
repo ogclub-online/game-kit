@@ -1,0 +1,54 @@
+name: watch the swarm
+# Once a day: look for games the imd.fun swarm built for this kit (jobs paid by the IMD_PAYER wallet, a repository
+# secret), and import each new one as a pull request with the "import a game" workflow. Nothing is merged by itself.
+# Set the secret in Settings → Secrets and variables → Actions → New repository secret: IMD_PAYER = the wallet.
+on:
+  schedule:
+    - cron: '17 7 * * *'
+  workflow_dispatch:
+permissions: {}
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      games: ${{ steps.find.outputs.games }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Find new swarm games (reads only; runs no game code)
+        id: find
+        env:
+          IMD_PAYER: ${{ secrets.IMD_PAYER }}
+          GH_TOKEN: ${{ github.token }}
+          OUT: found.json
+        run: |
+          if [ -z "$IMD_PAYER" ]; then echo "No IMD_PAYER secret: nothing to watch."; echo "games=[]" >> "$GITHUB_OUTPUT"; exit 0; fi
+          node scripts/watch-swarm.js || { echo "games=[]" >> "$GITHUB_OUTPUT"; exit 0; }
+          # Skip games that already have an open import pull request.
+          open=$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq '[.[].head.ref | select(startswith("import/"))]')
+          games=$(jq -c --argjson open "$open" '[.[] | select(.id as $id | ($open | map(startswith("import/" + $id + "-")) | any | not))] | .[:5]' found.json)
+          echo "To import: $games"
+          echo "games=$games" >> "$GITHUB_OUTPUT"
+  import:
+    needs: discover
+    if: needs.discover.outputs.games != '[]' && needs.discover.outputs.games != ''
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        game: ${{ fromJSON(needs.discover.outputs.games) }}
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/import-game.yml
+    with:
+      site: ${{ matrix.game.site }}
+      id: ${{ matrix.game.id }}
