@@ -1,16 +1,21 @@
 // `npm run new <id> [PREFIX]`: start a new game from the template (games/template, COIN DASH): copies it to
 // games/<id>, gives it its id, a name and its own message prefix, and it plays straight away
 // (npm run play, then open http://localhost:5173/?game=<id>). Then make it yours.
+// `npm run new <id> <prefix> -- --inbox` makes it in the inbox, dist/games/<id>/, instead (for builders that may
+// only write the built site; see scripts/games.js). It runs `npm run build` first if dist/ isn't there yet.
 import { cp, readFile, writeFile, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');
-const id = process.argv[2], prefix = process.argv[3] ?? id?.replace(/[^a-z]/g, '').slice(0, 2);
+const inbox = process.argv.includes('--inbox'), args = process.argv.slice(2).filter((a) => a !== '--inbox');
+const id = args[0], prefix = args[1] ?? id?.replace(/[^a-z]/g, '').slice(0, 2);
 if (!id || !/^[a-z][a-z0-9-]{1,23}$/.test(id)) { console.error('usage: npm run new <id> [prefix]   (id: 2-24 lowercase letters, digits, dashes)'); process.exit(1); }
 if (!/^[a-z]{2,3}$/.test(prefix ?? '')) { console.error('the prefix must be 2-3 lowercase letters: npm run new <id> <prefix>'); process.exit(1); }
-const to = join(ROOT, 'games', id);
-if (await stat(to).catch(() => null)) { console.error(`games/${id} already exists`); process.exit(1); }
+const to = join(ROOT, inbox ? 'dist' : '', 'games', id), shown = `${inbox ? 'dist/' : ''}games/${id}`;
+if (await stat(join(ROOT, 'games', id)).catch(() => null) || (inbox && await stat(to).catch(() => null))) { console.error(`${shown} already exists`); process.exit(1); }
+if (inbox && !(await stat(join(ROOT, 'dist', 'engine', 'world.js')).catch(() => null))) execFileSync(process.execPath, [join(ROOT, 'scripts', 'build-site.js')], { stdio: 'inherit' });
 await cp(join(ROOT, 'games', 'template'), to, { recursive: true });
 const name = id.replace(/-/g, ' ').toUpperCase();
 for (const f of await readdir(to, { recursive: true })) {
@@ -23,4 +28,4 @@ for (const f of await readdir(to, { recursive: true })) {
   s = s.replace(/game = 'template'/, `game = '${id}'`).replace(/COIN DASH/g, name);
   await writeFile(file, s);
 }
-console.log(`games/${id} is ready (prefix "${prefix}"). Play it: npm run play, then http://localhost:5173/?game=${id}`);
+console.log(`${shown} is ready (prefix "${prefix}"). Play it: npm run play, then http://localhost:5173/?game=${id}`);

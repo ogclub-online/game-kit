@@ -3,16 +3,18 @@
 // and a proper record at the end.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { LocalServer } from '../engine/local.js';
+import { allGames } from '../scripts/games.js';
 
-const games = readdirSync(new URL('../games/', import.meta.url)).filter((d) => { try { readFileSync(new URL(`../games/${d}/game.json`, import.meta.url)); return true; } catch { return false; } });
-
-for (const id of games) {
-  const m = JSON.parse(readFileSync(new URL(`../games/${id}/game.json`, import.meta.url), 'utf8'));
+// The kit's games and any in the inbox (dist/games/).
+for (const { id, dir } of allGames()) {
+  const m = JSON.parse(readFileSync(join(dir, 'game.json'), 'utf8'));
   for (const mode of m.modes) {
     test(`${m.name} (${mode}): plays 40 seconds of random keys and clicks, then ends and records`, async () => {
-      const { Round } = await import(`../games/${id}/round.js`);
+      const { Round } = await import(pathToFileURL(join(dir, 'round.js')).href);
       const s = new LocalServer(Round, { mode, seed: 9 });
       const a = s.open(11), mates = mode === 'coop' ? [s.join(12)].filter(Boolean) : [];
       s.message(a.id, { t: 'arenaGo' });

@@ -182,6 +182,10 @@ await p.waitForTimeout(5000); await p.keyboard.down('d'); await p.waitForTimeout
 await p.screenshot({ path: 'my-game.png' });
 ```
 
+**The inbox.** A builder that may only write the built site (`dist/`) builds the game in `dist/games/<id>/` instead
+(`npm run new <id> <prefix> -- --inbox`). The tests, checks, sims, the playtest page and `npm run build` all include
+it, and the built site lists it as in review. The reviewer moves it to `games/<id>/` when it's accepted.
+
 ## Checklist before a pull request
 
 - [ ] `npm test`, `npm run check` and `npm run sim` all pass

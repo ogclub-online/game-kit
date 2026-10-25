@@ -5,6 +5,7 @@
 // stays inside the sandbox: no network, no wallets, no storage, no HTML strings, no outside URLs, no dynamic code,
 // imports only from its own folder and the kit's engine. Anything here fails the pull request.
 import { readFile, readdir, stat } from 'node:fs/promises';
+import { allGames } from './games.js';
 import { join } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 
@@ -34,13 +35,14 @@ const FORBIDDEN = [
 const SERVER_ONLY = [[/\bsetTimeout|setInterval|requestAnimationFrame|performance\.now|Date\.now\s*\(/, 'timers or clocks (time comes in through tick(dt, now))'], [/\bdocument\b|\bwindow\b/, 'the browser']];
 
 const problems = [];
-const bad = (game, text) => problems.push(`games/${game}: ${text}`);
+const bad = (game, text) => problems.push(`${where?.get(game) ?? 'games'}/${game}: ${text}`);
 const exists = async (p) => { try { return (await stat(p)).isFile(); } catch { return false; } };
 
-const games = (await readdir(GAMES)).filter((d) => !d.startsWith('.'));
+// The kit's games plus any in the inbox (dist/games/, see scripts/games.js); KIT_GAMES checks one folder of games instead.
+const games = process.env.KIT_GAMES ? (await readdir(GAMES)).filter((d) => !d.startsWith('.')).map((id) => ({ id, dir: join(GAMES, id), inbox: false })) : allGames();
+const where = new Map(games.map((g) => [g.id, g.inbox ? 'dist/games' : 'games']));
 const prefixes = new Map();
-for (const id of games) {
-  const dir = join(GAMES, id);
+for (const { id, dir } of games) {
   if (!(await stat(dir)).isDirectory()) continue;
   // ---- the manifest
   let m;

@@ -14,8 +14,8 @@ const args = process.argv.slice(2), opt = (name) => { const i = args.indexOf(nam
 const id = args[0], out = resolve(opt('--out') ?? 'shots'), endAfter = Number(opt('--end')) || 0;
 const PORT = Number(process.env.PORT) || 5173, BASE = `http://localhost:${PORT}`;
 if (!id || id.startsWith('-')) { console.error('usage: node shot.mjs <game id> [--end <seconds>] [--out <dir>]   (run it from the kit root)'); process.exit(2); }
-if (!existsSync('engine/serve.js') || !existsSync(join('games', id, 'game.json'))) {
-  console.error(`run this from the kit's root folder, with games/${id}/game.json in it`); process.exit(2);
+if (!existsSync('engine/serve.js') || !(existsSync(join('games', id, 'game.json')) || existsSync(join('dist', 'games', id, 'game.json')))) {
+  console.error(`run this from the kit's root folder, with games/${id}/game.json (or dist/games/${id}/game.json, the inbox) in it`); process.exit(2);
 }
 
 let chromium;

@@ -19,6 +19,13 @@ git clone https://github.com/ogclub-online/game-kit && cd game-kit
 
 Node 22 or newer, nothing to install (`node --version`).
 
+**If you may only write the built site (`dist/`)**, as some site builders allow, build the game in the **inbox**,
+`dist/games/<id>/`, instead of `games/<id>/`. Everything else in this skill is the same: `npm run new <id> <prefix>
+-- --inbox` makes it there, and `npm test`, `npm run check`, `npm run sim`, `npm run play`, `npm run build` and the
+screenshot script all include inbox games (the build keeps them and lists them as in review). Commit `dist/` with
+it, and say in `PR.md` that it's an inbox game, so the reviewer moves it to `games/<id>/`. Don't touch the rest of
+`dist/` by hand: `npm run build` makes it.
+
 ## 1. Read before you write
 
 1. `BUILDING_A_GAME.md`, all of it: the contract (what each file exports), the rules a game must keep, testing,

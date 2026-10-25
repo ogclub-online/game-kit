@@ -22,6 +22,7 @@ npm test                     # every game plays through the local server, plus e
 npm run check                # the rules every game keeps (no network, no wallets, no outside code...)
 npm run sim                  # balance bots play every game for 1, 2 and 4 players
 npm run build                # the playtest page as a static site in dist/ (any static host, IPFS)
+npm run new my-game mg -- --inbox   # or build it in the inbox, dist/games/, if you may only write dist/
 ```
 
 ## With an AI agent
