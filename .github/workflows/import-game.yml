@@ -1,0 +1,129 @@
+name: import a game
+# Actions → "import a game" → Run workflow: paste a hosted kit site's address (or its games/<id>/ folder) and the
+# game's id. It downloads the game, checks it, and opens a pull request with it and the results.
+#
+# The game's code only ever runs in the "verify" job, which has no token and no write access, so a game can't
+# touch this repository or anything else. The job that commits and opens the pull request never runs it.
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: "The hosted site's address, or the game's folder on it (…/games/<id>/)"
+        required: true
+      id:
+        description: "The game's id (its folder name, e.g. lava-ring)"
+        required: true
+permissions: {}
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Download the game (nothing is run)
+        env:
+          SITE: ${{ inputs.site }}
+          GAME: ${{ inputs.id }}
+        run: |
+          [[ "$GAME" =~ ^[a-z][a-z0-9-]{1,23}$ ]] || { echo "bad game id"; exit 1; }
+          node scripts/import-game.js "$SITE" "$GAME" --force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: game
+          path: games/${{ inputs.id }}/
+          if-no-files-found: error
+          include-hidden-files: false
+
+  verify:
+    needs: fetch
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: {}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: game
+          path: games/${{ inputs.id }}/
+      - name: Check, test and simulate
+        env:
+          GAME: ${{ inputs.id }}
+        run: |
+          [[ "$GAME" =~ ^[a-z][a-z0-9-]{1,23}$ ]] || exit 1
+          ok=1
+          if npm run -s check > check.log 2>&1; then :; else ok=0; fi
+          { echo '### npm run check'; echo '```'; tail -40 check.log; echo '```'; } > results.md
+          { echo '### npm test'; echo '```'; } >> results.md
+          if npm test > test.log 2>&1; then :; else ok=0; fi
+          grep -E '^# (tests|pass|fail)|^not ok' test.log | head -40 >> results.md; echo '```' >> results.md
+          { echo '### npm run sim'; echo '```'; } >> results.md
+          if timeout 300 npm run -s sim -- "$GAME" > sim.log 2>&1; then :; else ok=0; fi
+          tail -20 sim.log >> results.md; echo '```' >> results.md
+          if [ "$ok" = 1 ]; then echo 'All passed.' >> results.md; else echo '**Something failed: see above.**' >> results.md; fi
+          cat results.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results
+          path: results.md
+
+  pull-request:
+    needs: [fetch, verify]
+    if: always() && needs.fetch.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: game
+          path: games/${{ inputs.id }}/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: results
+          path: .results/
+      - name: Commit the game and open a pull request (nothing is run)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SITE: ${{ inputs.site }}
+          GAME: ${{ inputs.id }}
+          VERIFY: ${{ needs.verify.result }}
+        run: |
+          [[ "$GAME" =~ ^[a-z][a-z0-9-]{1,23}$ ]] || exit 1
+          branch="import/$GAME-$GITHUB_RUN_ID"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add "games/$GAME"
+          git commit -m "Import $GAME from a hosted kit site" -m "From: $SITE"
+          git push origin "$branch"
+          {
+            echo "Imported \`games/$GAME\` from $SITE by the import workflow. Checks: **$VERIFY**."
+            echo
+            cat .results/results.md 2>/dev/null || echo "(no results)"
+            echo
+            echo "---"
+            echo "### The builder's description (games/$GAME/PR.md)"
+            echo
+            cat "games/$GAME/PR.md" 2>/dev/null || echo "(none)"
+          } > body.md
+          if ! gh pr create --base main --head "$branch" --title "Game: $GAME (imported)" --body-file body.md; then
+            echo "Couldn't open the pull request (turn on Settings → Actions → General → \"Allow GitHub Actions to create and approve pull requests\"), so open it by hand:"
+            echo "https://github.com/$GITHUB_REPOSITORY/compare/main...$branch"
+          fi

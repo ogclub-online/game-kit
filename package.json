@@ -12,6 +12,7 @@
     "check": "node scripts/check.js",
     "sim": "node scripts/sim.js",
     "new": "node scripts/new-game.js",
-    "build": "node scripts/build-site.js"
+    "build": "node scripts/build-site.js",
+    "import": "node scripts/import-game.js"
   }
 }

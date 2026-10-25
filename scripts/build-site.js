@@ -5,6 +5,7 @@
 // Games in the inbox (dist/games/<id>/ with no games/<id>/, see scripts/games.js) are kept as they are and listed
 // too, marked as in review: everything else in dist/ is rebuilt from scratch, the same every time.
 import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT, allGames, inboxGames } from './games.js';
 
@@ -26,6 +27,9 @@ for (const { dir, inbox } of allGames()) {
   try { games.push({ ...JSON.parse(await readFile(join(dir, 'game.json'), 'utf8')), ...(inbox ? { inbox: true } : {}) }); } catch { /* not a game */ }
 }
 await writeFile(join(OUT, 'games.json'), JSON.stringify(games));
+// Each game's files, for `npm run import` (static hosts don't list folders).
+const filesIn = (dir, pre = '') => readdirSync(dir).sort().flatMap((e) => (statSync(join(dir, e)).isDirectory() ? filesIn(join(dir, e), `${pre}${e}/`) : e === 'files.json' ? [] : [`${pre}${e}`]));
+for (const g of games) await writeFile(join(OUT, 'games', g.id, 'files.json'), JSON.stringify(filesIn(join(OUT, 'games', g.id))));
 
 const card = (g) => `<a class="g" href="engine/play.html?game=${encodeURIComponent(g.id)}"><b>${esc(g.name)}${g.inbox ? ' <i>NEW · IN REVIEW</i>' : ''}</b><small>${esc(g.tagline ?? '')}</small><span>${esc(g.players?.[0] ?? 1)}-${esc(g.players?.[1] ?? 1)} PLAYERS · ${esc((g.modes ?? []).join(' / ').toUpperCase())}</span></a>`;
 await writeFile(join(OUT, 'index.html'), `<!doctype html>
