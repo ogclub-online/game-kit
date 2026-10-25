@@ -1,0 +1,19 @@
+.lr-side { width: 276px; bottom: auto; max-height: calc(100vh - 100px); }
+.lr-spells, .lr-shop { display: grid; gap: 5px; background: rgba(11,18,32,.92); border: 1px solid #39465c; padding: 8px; }
+.lr-spells { grid-template-columns: 1fr 1fr; }
+.lr-spells .btn { min-height: 45px; font-size: 10px; display: grid; gap: 1px; padding: 5px 7px; }
+.lr-spells .btn small { color: #b0bdc4; font-size: 9px; }
+.lr-spells .btn.on { background: #e8833a; color: #111; }
+.lr-shop h4 { margin: 0; font-size: 13px; color: #e3b341; }
+.lr-shop p { margin: 0; font-size: 10px; color: #b8c4d1; }
+.lr-shop button { display: grid; gap: 2px; text-align: left; border: 1px solid #45546b; background: #132136; color: #e8eadf; padding: 6px; font: inherit; font-size: 10px; cursor: pointer; }
+.lr-shop button:disabled { opacity: .55; cursor: default; }
+.lr-shop button b { color: #e3b341; }
+.lr-shop button span { color: #b8c4d1; }
+.lr-stick { position: absolute; left: 22px; bottom: 24px; width: 112px; height: 112px; border-radius: 50%; border: 2px solid #e3b341; background: rgba(11,18,32,.7); touch-action: none; }
+.lr-stick-knob { position: absolute; left: 37px; top: 37px; width: 34px; height: 34px; border-radius: 50%; background: #e3b341; }
+@media (max-width: 700px) {
+  .lr-side { top: 45px; right: 8px; left: auto; bottom: auto; width: min(230px, 58vw); max-height: 42vh; }
+  .lr-spells .btn { min-height: 38px; }
+  .lr-shop { max-height: 35vh; overflow-y: auto; }
+}
