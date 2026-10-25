@@ -23,6 +23,22 @@ npm run check                # the rules every game keeps (no network, no wallet
 npm run sim                  # balance bots play every game for 1, 2 and 4 players
 ```
 
+## With an AI agent
+
+The kit ships an agent skill, **ogclub-game** ([`plugins/ogclub-game/skills/ogclub-game/SKILL.md`](plugins/ogclub-game/skills/ogclub-game/SKILL.md)):
+the route from an idea or a brief to a passing game and a pull request. It follows the open
+[Agent Skills](https://agentskills.io) format, so other agents that read skills can use it too.
+
+- **In this repository**, Claude Code picks it up by itself (`.claude/skills/`). Ask for a game.
+- **Anywhere else**, install it as a plugin, then ask for a game; it fetches the kit when it needs it:
+
+  ```
+  /plugin install ogclub-game --marketplace ogclub-online/game-kit
+  ```
+
+  or, on older versions, `/plugin marketplace add ogclub-online/game-kit` then `/plugin install ogclub-game@ogclub`.
+- **Other agents** read [AGENTS.md](AGENTS.md), which points to the same guide.
+
 ## What's here
 
 ```
@@ -35,6 +51,7 @@ engine/       what games plug into (don't change it in a game's pull request)
   play.html, style.css, serve.js
 games/        one folder per game: game.json, rules.js, round.js, client.js, panel.html, sim.js, test/
 scripts/      check.js, sim.js, new-game.js
+plugins/      the ogclub-game agent skill, as a plugin (.claude-plugin/ makes this repository its marketplace)
 ```
 
 ## Making a game

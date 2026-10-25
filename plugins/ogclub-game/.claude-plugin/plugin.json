@@ -1,0 +1,9 @@
+{
+  "name": "ogclub-game",
+  "description": "Build, test and submit games for OG Club World with the OG Club game kit.",
+  "version": "1.0.0",
+  "author": { "name": "OG Club" },
+  "homepage": "https://github.com/ogclub-online/game-kit",
+  "repository": "https://github.com/ogclub-online/game-kit",
+  "keywords": ["game", "ogclub", "game-kit", "pixel"]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "ogclub",
+  "description": "OG Club's plugins: make games for OG Club World.",
+  "owner": { "name": "OG Club" },
+  "plugins": [
+    {
+      "name": "ogclub-game",
+      "source": "./plugins/ogclub-game",
+      "description": "Build, test and submit games for OG Club World with the OG Club game kit."
+    }
+  ]
+}

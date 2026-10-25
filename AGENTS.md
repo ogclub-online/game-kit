@@ -12,3 +12,6 @@ This repository is the OG Club World game kit: you build games in `games/<id>/` 
 - Before you finish: `npm test`, `npm run check` and `npm run sim` pass, and you've looked at the game running in
   `npm run play` (screenshot it).
 - Node 22, no dependencies to install.
+- The step-by-step route is the `ogclub-game` skill: [plugins/ogclub-game/skills/ogclub-game/SKILL.md](plugins/ogclub-game/skills/ogclub-game/SKILL.md)
+  (Claude Code loads it from `.claude/skills/`). Its `scripts/shot.mjs <id>` screenshots a game solo, co-op and at
+  phone width.
