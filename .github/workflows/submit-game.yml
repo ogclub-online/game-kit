@@ -1,0 +1,43 @@
+name: game submission
+# Someone opens a "Submit a game" issue: import the game it names as a pull request (the "import a game" workflow:
+# download, check/test/sim with no token, pull request) and say so on the issue. Nothing merges by itself.
+on:
+  issues:
+    types: [opened]
+permissions: {}
+jobs:
+  read:
+    if: contains(github.event.issue.labels.*.name, 'game submission')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    outputs:
+      site: ${{ steps.parse.outputs.site }}
+      id: ${{ steps.parse.outputs.id }}
+    steps:
+      - name: Read the form (plain text only, checked before use)
+        id: parse
+        env:
+          BODY: ${{ github.event.issue.body }}
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.number }}
+        run: |
+          site=$(printf '%s\n' "$BODY" | awk '/^### Hosted site/{f=1;next} /^### /{f=0} f && NF{print; exit}' | tr -d '\r' | xargs)
+          id=$(printf '%s\n' "$BODY" | awk '/^### Game id/{f=1;next} /^### /{f=0} f && NF{print; exit}' | tr -d '\r' | xargs)
+          if [[ ! "$site" =~ ^https://[A-Za-z0-9.-]+(/[A-Za-z0-9._~/%-]*)?$ ]] || [[ ! "$id" =~ ^[a-z][a-z0-9-]{1,23}$ ]]; then
+            gh issue comment "$ISSUE" --repo "$GITHUB_REPOSITORY" --body "Couldn't read this submission: the site must be an https:// address and the id 2-24 lowercase letters, digits or dashes. Edit nothing here; open a new submission."
+            exit 1
+          fi
+          echo "site=$site" >> "$GITHUB_OUTPUT"
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+          gh issue comment "$ISSUE" --repo "$GITHUB_REPOSITORY" --body "Thanks! Importing \`$id\` now: a pull request named \"Game: $id (imported)\" will appear with the check results in a few minutes. OG Club reviews and plays every game before it goes live."
+  import:
+    needs: read
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/import-game.yml
+    with:
+      site: ${{ needs.read.outputs.site }}
+      id: ${{ needs.read.outputs.id }}

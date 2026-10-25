@@ -1,0 +1,32 @@
+name: Submit a game
+description: You built a game with the kit and it's on a hosted kit site (npm run build, any host or IPFS). We import it as a pull request.
+title: "Game submission: "
+labels: ["game submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Built with the kit and hosted somewhere (the imd.fun swarm, IPFS, any static host)? Paste where it is, and a
+        workflow downloads it, runs the checks, tests and sims, and opens a pull request. OG Club reviews and plays
+        every game before it goes into OG Club World.
+  - type: input
+    id: site
+    attributes:
+      label: Hosted site
+      description: The site's address, or the game's folder on it (…/games/<id>/). Must start with https://
+      placeholder: https://imd-ipfs.xyz/ipfs/bafy…/games/my-game/
+    validations:
+      required: true
+  - type: input
+    id: game
+    attributes:
+      label: Game id
+      description: The game's folder name (2-24 lowercase letters, digits, dashes)
+      placeholder: my-game
+    validations:
+      required: true
+  - type: textarea
+    id: about
+    attributes:
+      label: About the game (optional)
+      description: Anything the reviewer should know. Its PR.md is included automatically.

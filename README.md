@@ -65,7 +65,8 @@ do, how to test it, and the checklist. To ask someone (or an agent, or the swarm
 **A game built somewhere else and hosted as a kit site** (by the swarm, say) comes in with **Actions → import a
 game → Run workflow**: paste the site's address and the game's id. It downloads the game, runs the checks, tests and
 sims where the game can't touch anything, and opens a pull request with the results. Locally:
-`npm run import -- <site> <id>` downloads it into `games/<id>/` without running anything. **Watch the swarm** does this daily by
+`npm run import -- <site> <id>` downloads it into `games/<id>/` without running anything. Anyone can submit one with the **Submit a game** issue form, which imports it as a pull request the same way.
+**Watch the swarm** does this daily by
 itself for games the imd.fun swarm builds for the kit (set the `IMD_PAYER` repository secret to the wallet that pays
 for the jobs).
 
