@@ -3,12 +3,15 @@
   "private": true,
   "type": "module",
   "description": "Make games for OG Club World: the engine pieces, three example games, a local playtest page, simulators and checks.",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "play": "node engine/serve.js",
     "test": "node --test 'test/*.test.js' 'games/*/test/*.test.js'",
     "check": "node scripts/check.js",
     "sim": "node scripts/sim.js",
-    "new": "node scripts/new-game.js"
+    "new": "node scripts/new-game.js",
+    "build": "node scripts/build-site.js"
   }
 }

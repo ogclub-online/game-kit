@@ -21,6 +21,7 @@ npm run new my-game mg       # a new game from the template, with the message pr
 npm test                     # every game plays through the local server, plus each game's own tests
 npm run check                # the rules every game keeps (no network, no wallets, no outside code...)
 npm run sim                  # balance bots play every game for 1, 2 and 4 players
+npm run build                # the playtest page as a static site in dist/ (any static host, IPFS)
 ```
 
 ## With an AI agent
